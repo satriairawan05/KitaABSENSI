@@ -1,35 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KitaABSENSI - Presence</title>
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/kita-absensi.min.css" />
 </head>
+<body id="home" x-data="presenceApp()" x-init="init()">
 
-<body id="home" x-data="presenceApp()" x-init="initClock()">
-
-    <!-- ═══ FLOATING HOME ═══ -->
+    <!-- Floating Home -->
     <button class="btn-floating-home" @click="goHome()" aria-label="Go Home">
         <i class="bi bi-house-door-fill"></i>
     </button>
 
-    <!-- ═══ MAIN APP ═══ -->
-    <div
-        class="container-fluid d-flex align-items-center justify-content-center min-vh-100 bg-light-maroon p-3 p-md-4 p-lg-5">
+    <!-- Logout Button -->
+    <button class="btn-floating-logout" @click="logout()" aria-label="Logout">
+        <i class="bi bi-box-arrow-right"></i>
+    </button>
+
+    <div class="container-fluid d-flex align-items-center justify-content-center min-vh-100 bg-light-maroon p-3 p-md-4 p-lg-5">
         <div class="row w-100 justify-content-center">
             <div class="col-12 col-sm-10 col-md-9 col-lg-7 col-xl-6 col-xxl-5">
                 <div class="app-container p-0 shadow-lg rounded-4 bg-white overflow-hidden">
 
-                    <!-- Header -->
                     <header class="app-header p-3 p-sm-4 text-white rounded-top-4">
                         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
                             <div class="brand d-flex align-items-center gap-2">
@@ -37,23 +33,20 @@
                                 <span class="fw-bold fs-2 fs-sm-3">KitaABSENSI</span>
                                 <span class="badge bg-maroon-light text-maroon small ms-1">v1</span>
                             </div>
-                            <div
-                                class="clock bg-dark bg-opacity-25 px-3 py-1 rounded-pill fw-semibold d-flex align-items-center gap-2">
+                            <div class="clock bg-dark bg-opacity-25 px-3 py-1 rounded-pill fw-semibold d-flex align-items-center gap-2">
                                 <i class="bi bi-clock"></i>
                                 <span x-text="currentTime"></span>
                             </div>
                         </div>
                     </header>
 
-                    <!-- Body -->
                     <main class="app-body p-3 p-sm-4 p-md-5">
 
                         <!-- Outlet -->
                         <div class="mb-3">
-                            <label class="form-label fw-semibold" style="color: #3d1a1a;">Select Outlet <span
-                                    class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold" style="color: #3d1a1a;">Select Outlet <span class="text-danger">*</span></label>
                             <select class="form-select form-select-lg border-2 rounded-4" style="border-color: #dcc8c8;"
-                                x-model.number="selectedOutletId" @change="onOutletChange()">
+                                    x-model.number="selectedOutletId" @change="onOutletChange()">
                                 <option value="" disabled selected>— Select Outlet —</option>
                                 <template x-for="outlet in outlets" :key="outlet.id">
                                     <option :value="outlet.id" x-text="outlet.name"></option>
@@ -63,20 +56,17 @@
 
                         <!-- Shift -->
                         <div class="mb-3">
-                            <label class="form-label fw-semibold" style="color: #3d1a1a;">Select Shift <span
-                                    class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold" style="color: #3d1a1a;">Select Shift <span class="text-danger">*</span></label>
                             <div x-show="selectedOutletId && shifts.length > 0">
                                 <div class="row g-2" :class="shifts.length === 2 ? 'row-cols-2' : 'row-cols-3'">
                                     <template x-for="shift in shifts" :key="shift.id">
                                         <div class="col">
                                             <div class="shift-card p-3 border rounded-4 text-center h-100"
-                                                :class="{ 'border-maroon bg-maroon-light shadow-sm': selectedShiftId === shift.id }"
-                                                @click="selectedShiftId = shift.id" role="button">
+                                                 :class="{ 'border-maroon bg-maroon-light shadow-sm': selectedShiftId === shift.id }"
+                                                 @click="selectedShiftId = shift.id" role="button">
                                                 <div class="fw-bold" x-text="shift.name"></div>
-                                                <div class="small text-secondary"
-                                                    x-text="shift.start + ' – ' + shift.end"></div>
-                                                <span class="badge bg-maroon-light text-maroon mt-1"
-                                                    x-text="shift.label || 'Shift'"></span>
+                                                <div class="small text-secondary" x-text="shift.start + ' – ' + shift.end"></div>
+                                                <span class="badge bg-maroon-light text-maroon mt-1" x-text="shift.label || 'Shift'"></span>
                                             </div>
                                         </div>
                                     </template>
@@ -89,10 +79,8 @@
 
                         <!-- Presence Type -->
                         <div class="mb-3">
-                            <label class="form-label fw-semibold" style="color: #3d1a1a;">Presence Type <span
-                                    class="text-danger">*</span></label>
-                            <select class="form-select form-select-lg border-2 rounded-4" style="border-color: #dcc8c8;"
-                                x-model="presenceType">
+                            <label class="form-label fw-semibold" style="color: #3d1a1a;">Presence Type <span class="text-danger">*</span></label>
+                            <select class="form-select form-select-lg border-2 rounded-4" style="border-color: #dcc8c8;" x-model="presenceType">
                                 <option value="masuk">Check In</option>
                                 <option value="pulang">Check Out</option>
                             </select>
@@ -100,28 +88,23 @@
 
                         <!-- Name -->
                         <div class="mb-3">
-                            <label class="form-label fw-semibold" style="color: #3d1a1a;">Name <span
-                                    class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold" style="color: #3d1a1a;">Name <span class="text-danger">*</span></label>
                             <div class="d-flex align-items-center gap-3 mb-2 flex-wrap">
-                                <span class="fw-medium" :class="{ 'text-secondary': !isSelf }" @click="isSelf = true"
-                                    role="button">Myself</span>
+                                <span class="fw-medium" :class="{ 'text-secondary': !isSelf }" @click="isSelf = true" role="button">Myself</span>
                                 <button type="button" class="btn-toggle rounded-pill border-0 position-relative"
-                                    :class="{ 'bg-maroon': isSelf }" @click="isSelf = !isSelf"
-                                    style="width:54px;height:30px;background:#dcc8c8;transition:0.25s;">
-                                    <span
-                                        class="toggle-knob d-block position-absolute bg-white rounded-circle shadow-sm"
-                                        style="width:24px;height:24px;top:3px;left:3px;transition:0.25s;"
-                                        :style="isSelf ? 'transform:translateX(24px);' : ''"></span>
+                                        :class="{ 'bg-maroon': isSelf }" @click="isSelf = !isSelf"
+                                        style="width:54px;height:30px;background:#dcc8c8;transition:0.25s;">
+                                    <span class="toggle-knob d-block position-absolute bg-white rounded-circle shadow-sm"
+                                          style="width:24px;height:24px;top:3px;left:3px;transition:0.25s;"
+                                          :style="isSelf ? 'transform:translateX(24px);' : ''"></span>
                                 </button>
-                                <span class="fw-medium" :class="{ 'text-secondary': isSelf }" @click="isSelf = false"
-                                    role="button">Other Person</span>
+                                <span class="fw-medium" :class="{ 'text-secondary': isSelf }" @click="isSelf = false" role="button">Other Person</span>
                             </div>
-                            <input type="text" class="form-control form-control-lg border-2 rounded-4"
-                                style="border-color: #dcc8c8;" x-model="name" :readonly="isSelf"
-                                :placeholder="isSelf ? 'Deuwi Satriya Irawan' : 'Type other person name...'" />
+                            <input type="text" class="form-control form-control-lg border-2 rounded-4" style="border-color: #dcc8c8;"
+                                   x-model="name" :readonly="isSelf"
+                                   :placeholder="isSelf ? 'Deuwi Satriya Irawan' : 'Type other person name...'" />
                             <div class="form-text" x-show="isSelf">✅ Name taken from logged-in user</div>
-                            <div class="form-text" x-show="!isSelf">✏️ Type the name of the person you are attending
-                            </div>
+                            <div class="form-text" x-show="!isSelf">✏️ Type the name of the person you are attending</div>
                         </div>
 
                         <!-- Photo -->
@@ -129,27 +112,23 @@
                             <label class="form-label fw-semibold" style="color: #3d1a1a;">Photo (optional)</label>
                             <div class="d-flex flex-wrap align-items-center gap-3">
                                 <input type="file" id="photoInput" accept="image/png, image/jpeg, image/jpg"
-                                    x-ref="photoInput" @change="handlePhoto($event)" class="d-none" />
-                                <button type="button" class="btn btn-outline-maroon rounded-pill px-4"
-                                    @click="$refs.photoInput.click()">
+                                       x-ref="photoInput" @change="handlePhoto($event)" class="d-none" />
+                                <button type="button" class="btn btn-outline-maroon rounded-pill px-4" @click="$refs.photoInput.click()">
                                     <i class="bi bi-upload me-2"></i> Upload Photo
                                 </button>
-                                <div x-show="photoPreview"
-                                    class="position-relative rounded-4 overflow-hidden border border-2"
-                                    style="width:80px;height:80px;border-color:#7a2a3a;">
+                                <div x-show="photoPreview" class="position-relative rounded-4 overflow-hidden border border-2"
+                                     style="width:80px;height:80px;border-color:#7a2a3a;">
                                     <img :src="photoPreview" alt="Preview" class="w-100 h-100 object-fit-cover" />
-                                    <button type="button"
-                                        class="btn-close position-absolute top-0 end-0 m-1 bg-white rounded-circle p-1"
-                                        @click="photoPreview = null; photoFile = null"></button>
+                                    <button type="button" class="btn-close position-absolute top-0 end-0 m-1 bg-white rounded-circle p-1"
+                                            @click="photoPreview = null; photoFile = null"></button>
                                 </div>
                             </div>
-                            <div class="form-text" x-show="!photoPreview">Click the button to upload photo from gallery
-                                (JPG, PNG)</div>
+                            <div class="form-text" x-show="!photoPreview">Click the button to upload photo from gallery (JPG, PNG)</div>
                         </div>
 
                         <!-- Submit -->
                         <button class="btn btn-maroon text-white w-100 py-3 rounded-4 fw-bold fs-5 shadow-lg"
-                            @click="submitPresence()" :disabled="!isFormValid || isSubmitting">
+                                @click="submitPresence()" :disabled="!isFormValid || isSubmitting">
                             <template x-if="!isSubmitting">
                                 <span><i class="bi bi-check2-circle me-2"></i> Submit Presence</span>
                             </template>
@@ -160,17 +139,14 @@
 
                         <!-- Link ke Rekap -->
                         <div class="mt-3 text-center" style="position: relative; z-index: 10;">
-                            <button onclick="window.location.href='rekap.html'"
-                                class="btn btn-outline-maroon rounded-pill px-4">
+                            <a href="rekap.html" class="btn btn-outline-maroon rounded-pill px-4">
                                 <i class="bi bi-clipboard-data me-2"></i> View Recap
-                            </button>
+                            </a>
                         </div>
 
                     </main>
 
-                    <!-- Footer -->
-                    <footer class="app-footer p-3 text-center text-secondary-emphasis border-top"
-                        style="border-top-color: #dcc8c8;">
+                    <footer class="app-footer p-3 text-center text-secondary-emphasis border-top" style="border-top-color: #dcc8c8;">
                         &copy; 2026 KitaABSENSI &middot; Always on time, work with pride.
                     </footer>
 
@@ -179,7 +155,7 @@
         </div>
     </div>
 
-    <!-- ═══ MODAL PRESENCE RESULT ═══ -->
+    <!-- Modal Presence Result -->
     <div class="modal fade" id="presenceModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4" style="border: 2px solid #7a2a3a;">
@@ -190,30 +166,24 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body pt-2">
-                    <!-- Pesan Utama -->
                     <div class="mb-3 fs-6" x-text="modalMessage" style="white-space: pre-line; color: #3d1a1a;"></div>
-
-                    <!-- Alert Keterlambatan (Hanya muncul jika memang terlambat DAN ada pesannya) -->
                     <div x-show="modalLate && modalLateMessage" class="alert alert-warning rounded-4 mt-2">
                         <i class="bi bi-clock-history me-2"></i> <span x-text="modalLateMessage"></span>
                     </div>
-
-                    <!-- Foto Preview (Hanya muncul jika modalPhoto aktif DAN modalPhotoPreview tidak null/kosong) -->
                     <div x-show="modalPhoto && modalPhotoPreview" class="mt-3 text-center">
                         <p class="small text-secondary text-start mb-1"><i class="bi bi-image"></i> Foto Lampiran:</p>
                         <img :src="modalPhotoPreview" alt="Foto Absen" class="img-fluid rounded-4 shadow-sm border"
-                            style="max-height: 220px; object-fit: cover;" />
+                             style="max-height: 220px; object-fit: cover;" />
                     </div>
                 </div>
                 <div class="modal-footer border-0 pt-2">
-                    <button type="button" class="btn btn-outline-maroon rounded-pill px-4"
-                        data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-maroon rounded-pill px-4" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ═══ TOAST MODAL ═══ -->
+    <!-- Toast Modal -->
     <div class="modal fade" id="toastModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4" style="border: 2px solid #7a2a3a;">
@@ -228,10 +198,7 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS -->
     <script src="assets/js/kita-absensi.min.js"></script>
 </body>
-
 </html>
